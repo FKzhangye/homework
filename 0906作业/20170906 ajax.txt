@@ -1,0 +1,132 @@
+
+一、ajax
+AJAX  Asynchronous JavaScript and XML （异步JavaScript和XML）
+	优势：通过在后台与服务器进行少量数据交换，AJAX 可以使网页实现异步更新。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。
+
+ajax三个要素：
+1、带着数据偷偷上到服务器（GET或者POST，GET是通过URL地址?，POST报文头）
+2、传回JSON。
+3、组建DOM、更新页面
+
+存有 XMLHttpRequest 的状态。从 0 到 4 发生变化。
+0: 请求未初始化
+1: 服务器连接已建立
+2: 请求已接收
+3: 请求处理中
+4: 请求已完成，且响应已就绪
+xhr.NODE == 4;
+
+
+1、XMLHttpRequest
+	创建一个ajax对象var xhr = new XMLHttpRequest();
+2、onreadystatechange
+	事件，每次状态改变时时都会执行
+3、readyState
+	当前文档的状态
+4、var json = JSON.parse(xhr.responseText);
+	xhr.responseText就表示接收回来的文本
+	JSON.parse 从字符串解析出json对象
+
+
+二、GET和POST的区别
+ GET传参在请求的文件后面，参数长度受浏览器限制
+ POST请求参数在请求头的body部分，可以上传文件，传参的内容长度不受限制
+
+三、Ajax的一个固定的模板：	
+	//提交到h1
+	var oH1 = var oUl1 = document.querySelector('h1'); 
+	//第1步创建一个xhr对象，使用new关键来调用一个内置构造函数
+	var xhr = new XMLHttpRequest();
+	//第二部绑定准备状态改变事件
+	//xhr对象一旦开始open，就有了readyState属性，readyState属性一旦发生改变，就能够触发onreadystatechange事件
+	xhr.onreadystatechange = function(){
+		//xhr.readyState  当前文档的状态
+		//xhr.readyState == 4 对应
+		//xhr.DONE === 4 请求已完成，且响应已就绪，可以执行if里的内容
+		if(xhr.readyState == xhr.DONE){
+			//接收完文件要做的事情，让h1的内容变为读取的东西									//xhr.responseText就表示接收回来的文本
+			//拿到xhr.responseText之后，由于它是JSON字符串，我们使用JSON.parse将其转为对象
+			oH1.innerHTML = xhr.responseText;
+		}
+	}
+	
+	//第3步创建一个请求，
+	//第一个参数是请求的类型get或者post，
+	//第二个参数就是请求的路径，
+	//第三个参数叫做是否使用异步机制 true是异步，false同步，默认异步
+
+	//xhr.open("请求方式",URL)请求方式
+	xhr.open("get","a.txt",true);
+	//第4步发送请求，圆括号里面是请求头内容
+	//get请求报头里面没有内容，post请求有内容。
+	//如果用post发送请求，那么必须写一句话，模拟成form表单提交：
+	xhr.open("post","a.txt");
+	xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	xhr.send("status=check&username="+oInput.value);
+
+
+
+四、HTTP状态码
+
+ajax一定要把步骤分清了，第一步是能够顺利的把数据请求回来；每一次http请求，会根据请求是否成功，有不同的状态码
+
+请求返回的HTTP状态码：
+  200 - 300之间的是成功
+  304 not modified表示资源未改变，使用本地缓存
+     302 文件临时移动, 浏览器会比对你请求的文件，和已经在缓存文件夹中的文件，如果相同，不再请求。
+	  	这就是为啥第二次访问网站，速度更快的原因。
+     400 错误的请求
+     401 没有权限
+     403 禁止访问
+     500 服务器故障
+     502 错误的访问
+  404 not found 表示资源未找到，是客户端请求了不存在的文件；有可能是后端之前给你的，但是最近删除了，这个时候你应该找后端商量
+  500 表示服务器错误，这个你没有办法，直接让后端改；除非你也会写php,java,asp.net,nodejs
+
+用if语句验证：
+if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304){
+   //继续执行
+   //这样做的好处就是当请求的内容不存在的时候，就不把错误信息显示了
+}
+
+第二步是把拿到的数据充分的利用，根据返回内容在界面上更新DOM元素
+
+异步请求
+xhr.open(请求方式，API地址，是否为异步); true表示异步，false表示同步
+
+异步：不死等耗时较长的事情完成，先同时干别的事情，耗时较长的事情完成了，控制权交给回调函数
+同步：就是异步的反面，死等那个耗时较长的事情完成，然后做别的事情
+
+现在目前知道的异步：
+1、setInterval、setTimeout
+2、所有的事件监听可以看做异步oDiv.addEventListener
+3、Ajax（实际上也是onreadystatechange事件）
+
+
+六、O IE6兼容问题
+
+高级浏览器是
+    var xhr;
+    if (window.XMLHttpRequest) {
+      xhr = new XMLHttpRequest();//高级浏览器
+    } else {
+	//IE older
+      xhr = new ActiveXObject('Microsoft.XMLHTTP');
+    }
+
+七、缓存问题
+
+1、随机数法：
+	xhr.open("GET","test.txt?" + Math.random(),true);
+2、时间戳：
+时间戳就是Date.parse(new Date()) 到1970年1月1日00:00的毫秒数，精确到秒
+
+ ajax不允许跨域
+ URL: 协议：//域名或IP:端口/路径/文件名?查询参数#hash
+ 浏览器有同源策略，就是说你只能够请求自己同域里面的资源
+ 同域：协议, 域名或IP，端口三者都相同的时候表示同域
+
+八、表单序列化
+表单中的每个控件，都有name属性，值却是千差万别的，radio、checkbox、select甚至需要迭代才能得到他们的值。不方便，并且用ajax提交表单的时候，要手工序列化
+
+我们填的表单，最终要变为：name=卡片&age=18&sex=男&hobby=篮球  这个就叫做表单序列化
