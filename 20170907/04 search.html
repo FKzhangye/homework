@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>search</title>
+  <style type="text/css">
+  	.ul2{
+	  		width: 1160px;
+	  		height: 3000px;
+	  		margin:20px auto;
+	    	background: gainsboro;
+	  	}
+	    .ul2>li{
+	    	width: 260px;
+	    	height: 460px;
+	    	float: left;
+	    	list-style: none;
+	    	margin: 20px 10px;
+	    	background: greenyellow;
+	    }
+	    .ul2 a{
+        text-decoration: none;
+	    }
+	    .result{
+	    	width: 400px;
+	    	height: 40px;
+	    	margin: 10px auto;
+	    	font-size: 30px;
+	    	color: red;
+	    }
+	    .ul2 img{
+	    	width: 260px;
+	    	height: 260px;
+	    }
+	    .ul2 div{
+	    	width: 240;
+	    	height: 52px;
+	    	margin: 15px 10px;
+	    	color: black;
+	    	font-size: 18px;
+	    }
+	    .ul2 p{
+	    	width: 240;
+	    	height: 52px;
+	    	margin: 15px 10px;
+	    	color: black;
+	    	font-size: 15px;
+	    }
+	    .ul2 b{
+	    	color: red;
+	    	font-size: 20px;
+	    }
+	    .ul2 span{
+	    	color: red;
+	    	font-size: 25px;
+	    }
+	    .ul2 i{
+	    	color: red;
+	    	font-size: 15px;
+	    }
+	    #return{
+	    	width: 100px;
+	    	height: 30px;
+	    	text-align: center;
+	    	font-size: 22px;
+	    	margin: 20px 70px;
+	    }
+	    #return a{
+	    	text-decoration: none;
+	    	color: palegoldenrod;		
+	    }
+	    #return a:hover{
+	    	text-decoration: underline;
+	    	color: green;		
+	    }
+  </style>
+</head>
+<body>
+	<div id="return"><a href="01 ajax 商品首页.html">回到首页</a></div>
+  <ul class="ul2" id="hot-goods">
+  	<div class='result'>搜索结果，仅供选择</div>
+  </ul>
+  <script src="myajax.js" charset="utf-8"></script>
+  <script>
+    
+    var oGoods = document.querySelector('#hot-goods');
+    var search_text = getQueryString('search_text');
+    
+    myajax.get('http://h6.duchengjiu.top/shop/api_goods.php',
+    {search_text: search_text},
+    function(err,responseText){
+      var json = JSON.parse(responseText);
+      console.log(json);
+      var data = json.data;
+      for (var i = 0; i < data.length; i++) {
+      	
+        var obj = data[i];
+        
+        oGoods.innerHTML += `
+        <li>
+		            		<a href="08 goods.html?goods_id=${obj.goods_id}">
+		            			<img src="${obj.goods_thumb}"/>
+		            			<div>${obj.goods_name}</div>
+		            			<p>${obj.goods_desc}</p>
+		            			<b>￥</b>
+		            			<span>${obj.price}</span>
+		            			<i>元</i>
+		            		</a>
+		      </li>`;
+      }
+    });
+    </script>
+</body>
+</html>

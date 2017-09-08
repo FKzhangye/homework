@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		 <style>
+	    .ul1{
+	  		width: 1160px;
+	  		height: 40px;
+	  		margin:auto;
+	  		background: pink;
+	  	}
+	    .ul1>li {
+	      width: 103px;
+	      height: 20px;
+	      float: left;
+	      list-style: none;
+	      margin-right: 10px;
+	      background-color:pink;
+	      text-align: center;
+	      padding: 10px 0;
+	    }
+	    li>a {
+	      text-decoration: none;
+	      color: blue;
+	    }
+	    .ul1>li>a:hover {
+	      color: chartreuse;
+	      text-decoration: underline;
+	    }
+	    .ul2{
+	  		width: 1160px;
+	  		height: 2500px;
+	  		margin:20px auto;
+	    	background: gainsboro;
+	  	}
+	    .ul2>li{
+	    	width: 260px;
+	    	height: 460px;
+	    	float: left;
+	    	list-style: none;
+	    	margin: 20px 10px;
+	    	background: greenyellow;
+	    }
+	    .ul2 img{
+	    	width: 260px;
+	    	height: 260px;
+	    }
+	    .ul2 p{
+	    	width: 240;
+	    	height: 52px;
+	    	margin: 15px 10px;
+	    	color: black;
+	    	font-size: 15px;
+	    }
+	    .ul2 div{
+	    	width: 240;
+	    	height: 52px;
+	    	margin: 15px 10px;
+	    	color: black;
+	    	font-weight: 600;
+	    	font-size: 14px;
+	    }
+	    .ul2 b{
+	    	color: red;
+	    	font-size: 20px;
+	    }
+	    .ul2 span{
+	    	color: red;
+	    	font-size: 25px;
+	    }
+	    .ul2 i{
+	    	color: red;
+	    	font-size: 15px;
+	    }
+	    #return{
+	    	width: 100px;
+	    	height: 30px;
+	    	text-align: center;
+	    	font-size: 22px;
+	    	margin: 20px 70px;
+	    }
+	    #return a{
+	    	text-decoration: none;
+	    	color: palegoldenrod;		
+	    }
+	    #return a:hover{
+	    	text-decoration: underline;
+	    	color: green;		
+	    }
+    </style>
+	</head>
+	<body>
+		<div id="return"><a href="01 ajax 商品首页.html">回到首页</a></div>
+		<ul class="ul1" id="ul1"></ul>
+		<ul class="ul2" id="ul2"></ul>
+		<script src="myajax.js" charset="utf-8"></script>
+		<script type="text/javascript">
+			var oUl1 = document.querySelector("#ul1");
+			var oUl2 = document.querySelector("#ul2");
+			
+			function getQueryString(name){
+				
+				//1、location是包含了相关的url的信息，它是windown的一部分。
+				//2、search是一个可以查询的属性，可以查询？之后的部分。
+				//3、 substr(1) 就是从索引1开始截取
+				//4、match()是你要匹配的部分 后面可以是正则表达式.
+				var search = location.search.substr(1);
+				
+				//(^|&)开始或用&链接
+				//(&|$)结束或用&链接
+				var reg = new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
+				
+				var result = search.match(reg);
+//				console.log(search);
+//				console.log(result);
+				
+				if(result === null) return null;
+				return decodeURIComponent(result[2]);
+			}
+			
+//			console.log(getQueryString("cat_id"));
+			cat_id = getQueryString("cat_id");
+			
+			myajax.get('http://h6.duchengjiu.top/shop/api_cat.php', {}, 
+		    function(error, responseText){
+		        var json = JSON.parse(responseText);
+		        var data = json.data;
+		
+		        for (var i = 0; i < data.length; i++) {
+		          var obj = data[i];
+		          //href="02 ajax 商品列表.html?cat_id=${obj.cat_id}"
+		          oUl1.innerHTML +=`<li><a href="02 ajax 商品列表.html?cat_id=${obj.cat_id}">${obj.cat_name}</a></li>`;
+		        }
+		    });
+		    
+		    
+			myajax.get('http://h6.duchengjiu.top/shop/api_goods.php?cat_id='+cat_id, 
+			{}, function(error, responseText){
+		        var json = JSON.parse(responseText);//返回的整个json对象
+		        var data = json.data;//json对象当中的data是一个数组
+		
+		        for (var i = 0; i < data.length; i++) {
+		            var obj = data[i];	
+		            oUl2.innerHTML += `
+		            	<li>
+		            		<a href="08 goods.html?goods_id=${obj.goods_id}">
+		            			<img src="${obj.goods_thumb}"/>
+		            			<div>${obj.goods_name}</div>
+		            			<p>${obj.goods_desc}</p>
+		            			<b>￥</b>
+		            			<span>${obj.price}</span>
+		            			<i>元</i>
+		            		</a>
+		            	</li>`;
+		        }
+		    });
+				
+		</script>
+	</body>
+</html>

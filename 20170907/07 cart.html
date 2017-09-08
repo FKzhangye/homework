@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			
+			#return{
+		    	width: 100px;
+		    	height: 30px;
+		    	text-align: center;
+		    	font-size: 22px;
+		    	margin: 20px;
+		    }
+		    #return a{
+		    	text-decoration: none;
+		    	color: palegoldenrod;		
+		    }
+		    #return a:hover{
+		    	text-decoration: underline;
+		    	color: green;		
+		    }
+		    #oCart{
+		    	width: 100px;
+		    	height: 30px;
+		    	text-align: center;
+		    	font-size: 22px;
+		    	color: red;
+		    	margin: 20px auto;
+		    }
+			table{
+				width: 1000px;
+				margin: 20px auto;
+				background: bisque;
+			}
+			.first{
+				width:1000px;
+				height: 30px;
+				line-height: 30px;
+			}
+			td img{
+				width: 110px;
+				height: 110px;
+			}
+		    .id,.number,.unit-price,.total-price,.img{
+		    	width: 110px;
+		    	text-align: center;
+		    }
+		    .name{
+		    	width: 200px;
+		    	text-align: center;
+		    }
+		    .total{
+		    	width: 300px;
+		    	line-height: 30px;
+		    	line-height: 30px;
+		    	text-align: center;
+		    	font-size: 25px;
+		    	margin: 20px auto;
+		    }
+		</style>
+	</head>
+	<body>
+		<div id="return"><a href="01 ajax 商品首页.html">回到首页</a></div>
+		<div id="oCart">购物车</div>
+		<table>
+		    <tr class="first">
+		        <td class="id">商品ID</td>
+		        <td class="img">图片</td>
+		        <td class="name">名称</td>
+		        <td class="number">数量</td>
+		        <td class="unit-price">单价</td>
+		        <td class="total-price">总价</td>
+		    </tr>
+		    <!--<tr class="first">
+		        <td class="id">231234</td>
+		        <td><img src=""></td>
+		        <td class="name">常常常常常常常常多带点滴滴水水水水水水水撒名称</td>
+		        <td class="number">1</td>
+		        <td class="unit-price">333</td>
+		        <td class="total-price">333</td>
+		    </tr>-->
+		</table>
+		<div class="total">总计：<span id="sum">0</span></div>
+		<script type="text/javascript" src="myajax.js"></script>
+		<script type="text/javascript">
+			var oTable = document.querySelector('table');
+		    var oSum = document.querySelector('#sum');
+		    myajax.get('http://h6.duchengjiu.top/shop/api_cart.php', {token: localStorage.token}, function(err, responseText){
+		        var json = JSON.parse(responseText);
+		        console.log(json);
+		        var data = json.data;
+		        var sum = 0;
+		        for (var i = 0; i < data.length; i++) {
+			        var obj = data[i];
+			        sum += obj.goods_price * obj.goods_number;
+			        oTable.innerHTML += `
+		                <tr>
+			                <td class="id">${obj.goods_id}</td>
+			                <td class="img"><img src="${obj.goods_thumb}" ></td>
+			                <td class="name">${obj.goods_name}</td>
+			                <td class="number"><input data-id="${obj.goods_id}" type="number" name="number" value="${obj.goods_number}" /></td>
+			                <td class="unit-price">${obj.goods_price}</td>
+			                <td class="total-price" name="sum">${obj.goods_price*obj.goods_number}</td>
+		                </tr>
+		                `;
+		      		}
+		      	getSum();
+		    });	
+		    
+		    oTable.onchange = function(event) {
+		        event = event || window.event;
+		        var target = event.target || event.srcElement;
+		        if (target.name === 'number') {
+			        console.log(target.value, target.dataset.id);
+			        var goods_id = target.dataset.id;
+			        var number = target.value;
+			        myajax.post('http://h6.duchengjiu.top/shop/api_cart.php?token='+localStorage.token,
+			        {goods_id, number},
+			        function(err, responseText) {
+				          var json = JSON.parse(responseText);
+				          console.log(json);
+				          if (json.code === 0) {
+					            // alert('更新购物车成功');
+					            //修改总价和小计
+					            var goods_price = parseInt(target.parentNode.nextElementSibling.innerText);
+					            target.parentNode.nextElementSibling.nextElementSibling.innerText = parseInt(target.value) * goods_price;
+					            getSum();
+			          	}
+			        })
+			    }
+		    }
+		
+		    function getSum() {
+			      var oSums = document.querySelectorAll('td[name=sum]');
+			      var sum = 0;
+			      for (var i = 0; i < oSums.length; i++) {
+			       	 sum += parseInt(oSums[i].innerText);
+			      }
+			      oSum.innerText = sum;
+		    }
+		    
+		    
+		</script>
+	</body>
+</html>

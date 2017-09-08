@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" type="text/css" href="ul.css"/>
+</head>
+<body>
+  	<div id="header">
+  		<div id="page">首页</div>
+		<div id="register">
+	  		<a href="05 register.html">注册</a>
+	    </div>
+	    <div id="login">
+	  		<a href="06 login.html">登录</a>
+	    </div>
+	     <div id="cart">
+	  		<a href="07 cart.html">购物车</a>
+	    </div>
+	    <input type="text" name="search" id="search" placeholder="请输入要搜索的内容"/>
+  	</div>
+  	
+  	<script src="myajax.js" charset="utf-8"></script>
+    <script type="text/javascript">
+    	var oSearch = document.querySelector("#search");
+    	oSearch.onkeyup = function (event){
+    		var event = event || window.event;
+    		if(event.keyCode === 13){
+    			location.href = '04 search.html?search_text='+this.value;
+    		}
+    	}
+    </script>
+  	
+  <ul class="ul1" id="ul1"></ul>
+  <div class="heat">热门商品</div>
+  <ul class="ul2" id="ul2"></ul>
+  
+  <script>
+  	
+    var oUl1 = document.querySelector('#ul1');
+    var oUl2 = document.querySelector('#ul2');
+    
+  	//商品分类
+    myajax.get('http://h6.duchengjiu.top/shop/api_cat.php', {}, 
+    function(error, responseText){
+        var json = JSON.parse(responseText);
+        var data = json.data;
+
+        for (var i = 0; i < data.length; i++) {
+          var obj = data[i];
+          //href="02 ajax 商品列表.html?cat_id=${obj.cat_id}"
+          oUl1.innerHTML +=`<li><a href="02 ajax 商品列表.html?cat_id=${obj.cat_id}">${obj.cat_name}</a></li>`;
+        }
+    });
+    
+    //热门商品
+     myajax.get('http://h6.duchengjiu.top/shop/api_goods.php', {}, function(error, responseText){
+        var json = JSON.parse(responseText);//返回的整个json对象
+        var data = json.data;//json对象当中的data是一个数组
+
+        for (var i = 0; i < data.length; i++) {
+            var obj = data[i];//数组里面的每一项是一个商品分类的对象	
+            oUl2.innerHTML += `<li>
+            		<a href="08 goods.html?goods_id=${obj.goods_id}">
+            			<img src="${obj.goods_thumb}"/>
+            			<div>${obj.goods_name}</div>
+            			<p>${obj.goods_desc}</p>
+            			<b>￥</b>
+            			<span>${obj.price}</span>
+            			<i>元</i>
+            		</a>
+            	</li>`;
+        }
+    });
+    
+  </script>
+</body>
+</html>

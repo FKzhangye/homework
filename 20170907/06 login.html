@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>用户登录</title>
+  <style type="text/css">
+  	#registr{
+  		width:300px;
+  		height: 300px;
+  		background: greenyellow;
+  		margin:auto;
+  		margin-top: 50px;
+  		overflow: hidden;
+  	}
+  	#registr div{
+  		width: 300px;
+  		height: 30px;
+  		font-size: 30px;
+  		text-align: center;
+  		margin-top: 25px;
+  	}
+  	#registr input{
+  		width: 296px;
+  		height: 30px;
+  		font-size: 20px;
+  		line-height: 30px;
+  		margin: 20px 0;
+  	}
+  </style>
+</head>
+<body>
+	<div id="registr">
+		<div>用户登录</div>
+		<input type="text" name="username" placeholder="请输入用户名">
+	  	<input type="password" name="password" placeholder="请输入密码">
+	  	<input type="button" value="登录">
+	</div>
+	<script src="myajax.js" charset="utf-8"></script>
+	<script>
+		var oUsername = document.querySelector('input[name=username]');
+		var oPassword = document.querySelector('input[name=password]');
+		var oBtn = document.querySelector('input[type=button]');
+		
+		oBtn.onclick = function(){
+			myajax.post('http://h6.duchengjiu.top/shop/api_user.php',
+			{
+				status:'login',
+				username:oUsername.value,
+				password:oPassword.value
+			},function(error,responseText){
+				var json = JSON.parse(responseText);
+				console.log(json);
+				
+				//将json.data.token用localStorage存储
+				
+				localStorage.token = json.data.token;
+				localStorage.username = json.data.username;
+				console.log("token: "+localStorage.token);
+				console.log("username: "+localStorage.username);
+			});
+		}
+  </script>
+</body>
+</html>

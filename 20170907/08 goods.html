@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>商品详情页</title>
+		<style type="text/css">
+			#odiv{
+		    	width:300px;
+		    	height: 500px;
+		    	margin: 50px auto;
+		    	background: greenyellow;
+		    }
+		    #odiv img{
+		    	width: 300px;
+		    	height: 300px;
+		    }
+		    #odiv p{
+		    	width: 280px;
+		    	height: 35px;
+		    	margin: 15px 10px;
+		    	color: black;
+		    	font-size: 15px;
+		    }
+		    #odiv div{
+		    	width: 280px;
+		    	height: 35px;
+		    	margin: 15px 10px;
+		    	color: black;
+		    	font-weight: 600;
+		    	font-size: 14px;
+		    }
+		    #odiv b{
+		    	color: red;
+		    	font-size: 20px;
+		    }
+		    #odiv span{
+		    	color: red;
+		    	font-size: 25px;
+		    }
+		    #odiv i{
+		    	color: red;
+		    	font-size: 15px;
+		    }
+		    #odiv div input{
+		    	width: 150px;
+		    	height: 28px;
+		    	line-height: 20px;
+		    	font-size: 15px;
+		    	margin: 0 40px;
+		    }
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript" src="myajax.js"></script>
+		<script type="text/javascript">
+			var oUl2 = document.querySelector("#ul2")
+			var goods_id = getQueryString('goods_id');
+		    console.log(goods_id);
+		    myajax.get('http://h6.duchengjiu.top/shop/api_goods.php', {
+		      // goods_id: goods_id ES5
+		        goods_id //ES6
+		    }, function(err, responseText){
+		        var json = JSON.parse(responseText);
+		        var obj = json.data[0];
+		        console.log(json);
+      		document.body.innerHTML = `
+	      		<div id="odiv">
+			        <img src="${obj.goods_thumb}">
+			        <div>${obj.goods_name}</div>
+            		<p>${obj.goods_desc}</p>
+            		<b>￥</b>
+            		<span>${obj.price}</span>
+            		<i>元</i>
+			        <div><input type="button" id="add-to-cart" value="添加到购物车"></div>
+	     	 	</div> `;
+    		});
+    		
+    		//点击添加按钮 ，将对应物品添加到购物车
+    		document.body.onclick = function(event){
+    			var event = event || window.event;
+    			//IE里获取发生事件的DOM节点用的是event.srcElement
+    			var target = event.target || window.srcElement;
+    			if(target.id === "add-to-cart"){
+    				console.log(target.id === "add-to-cart");
+    				console.log("添加到购物车");
+    				myajax.post('http://h6.duchengjiu.top/shop/api_cart.php?token='+localStorage.token,
+    				{goods_id:goods_id,number:1},
+    				function(error,responseText){
+    					var json = JSON.parse(responseText);
+    					console.log(json);
+    					console.log("json.code: "+json.code);
+    					if(json.code === 0){
+    						alert("添加到购物车成功");
+    					}
+    				});
+    			}
+    		}
+    		
+		</script>
+	</body>
+</html>
