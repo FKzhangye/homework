@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>post</title>
+	</head>
+	<body>
+		<input type="" name="" id="" value="" />
+		<span id=""></span>
+		<script src="myajax.js" charset="utf-8"></script>
+	    <script>
+	      var oInput = document.querySelector('input');
+	      var oSpan = document.querySelector('span');
+	      oInput.onblur = function() {
+	        myajax.post('http://h6.duchengjiu.top/shop/api_user.php',
+	        {status: 'check', username: oInput.value},
+	        function(error, responseText) {
+	            var json = JSON.parse(responseText);
+	            oSpan.innerText = json.message;
+	            oSpan.style.display = 'block'
+	            if (json.code === 0) {
+	              oSpan.className = "right";
+	            } else {
+	              oSpan.className = "error";
+	            }
+	        });
+	
+	      }
+	    </script>
+	</body>
+</html>
+
+ 

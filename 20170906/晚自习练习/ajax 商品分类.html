@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+  	ul{
+  		width: 1160px;
+  		height: 40px;
+  		margin:10px auto;
+  	}
+    li {
+    	width: 103px;
+    	height: 30px;
+      float: left;
+      list-style: none;
+      margin-right: 10px;
+      background-color:cyan;
+      text-align: center;
+      padding: 10px 0;
+    }
+    a {
+      text-decoration: none;
+      color: black;
+    }
+    a:hover {
+      background-color: violet;
+    }
+    #odiv{
+    	width: 1119px;
+    	height: 10px;
+    	margin: auto;
+    	background:blue;
+    }
+  </style>
+</head>
+<body>
+  <ul></ul>
+  <div id="odiv"></div>
+  <script>
+    var oUl = document.querySelector('ul');
+	var oDiv = document.querySelector("#odiv");
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === xhr.DONE) {
+        try {
+          var json = JSON.parse(xhr.responseText);//返回的整个json对象
+          var data = json.data;//json对象当中的data是一个数组
+          for (var i = 0; i < data.length; i++) {
+            var obj = data[i];//数组里面的每一项是一个商品分类的对象
+          oUl.innerHTML += '<li><a href="#">' + obj.cat_name + '</a></li>';
+          }
+        } catch (error) {
+
+        }
+      }
+    }
+    //请求资源
+    xhr.open('GET', 'http://h6.duchengjiu.top/shop/api_cat.php');
+    //发送请求
+    xhr.send();
+  </script>
+</body>
+</html>
