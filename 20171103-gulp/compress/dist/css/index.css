@@ -1,0 +1,25 @@
+html {
+  color: orange;
+}
+a {
+  color: orange;
+}
+div {
+  width: 100px;
+  height: 100px;
+  border: 1px solid orange;
+}
+.error {
+  color: red;
+}
+.box {
+  color: #ffa500;
+  border-color: #ffdb99;
+}
+.box div {
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+li {
+  color: red;
+}

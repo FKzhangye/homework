@@ -1,0 +1,40 @@
+@primaryColor: orange;
+@dangerColor: red;
+html {
+    color: @primaryColor;
+}
+
+a {
+    color: @primaryColor;
+}
+
+div {
+    width: 100px;
+    height: 100px;
+    border: 1px solid @primaryColor;
+}
+
+.error {
+    color: @dangerColor;
+}
+
+.box-shadow(@style, @c) when (iscolor(@c)) {
+    -webkit-box-shadow: @style @c;
+    box-shadow: @style @c;
+}
+
+.box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {
+    .box-shadow(@style, rgba(0, 0, 0, @alpha));
+}
+
+.box {
+    color: saturate(@primaryColor, 5%);
+    border-color: lighten(@primaryColor, 30%);
+    // 嵌套 .box div
+    div {
+        .box-shadow(0 0 5px, 30%)
+    }
+}
+li{
+    color: @dangerColor;
+}

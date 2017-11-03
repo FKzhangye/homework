@@ -1,0 +1,243 @@
+gulp 新手入门
+
+gulp是基于node实现web前端自动开发的工具，利用它可以提高开发效率。
+构建：压缩，改名，删除文件，热加载，预编译等等更多（功能主要呢，是看插件，而不是看gulp本身)
+主要特点是：易于使用；构建快速；插件高质；易于学习（所有的 gulp 代码编写都可以看做是将规律转化为代码的过程）
+gulp 是基于 node 实现的，那么我们就需要先安装 node,将node和gulp安装在同一盘下。
+现在主要说安装gulp及对应的操作
+
+首先，创建文件夹compress，放置关于gulp的代码，在文件夹compress下操作命令行
+
+$ npm i -g gulp  //全局安装
+$ npm init -y  //初始化
+$ npm i -D gulp-uglify  //本地gulp-uglify
+$ gulp -v
+$ gulp //运行
+$ Ctrl + c //停止gulp
+
+gulp的使用
+
+一、压缩js代码
+1.在文件夹compres 下创建 gulpfile.js文件
+// 引入gulp, 实际上是Gulp的一个实例对象
+var gulp = require('gulp');
+// 是一个压缩js的插件 ，返回的是一个函数
+var uglify = require('gulp-uglify')
+//查看gulp
+console.log(gulp);
+
+2.编辑对应的压缩js的代码
+// 压缩 js 文件
+// 在命令行使用 gulp script 启动此任务
+gulp.task('script', function() {
+    // 1. 找到文件（压缩js文件夹下的所有的js文件）
+    gulp.src('js/*.js')
+    // 2. 压缩文件
+        .pipe(uglify())
+    // 3. 另存压缩后的文件（在文件夹compres创建对应的文件夹dist/js/）
+        .pipe(gulp.dest('dist/js'))
+})
+
+对应的具体意义
+//  gulp.task(name, fn) - 定义任务，第一个参数是任务名，第二个参数是任务内容。
+//  gulp.src(path) - 选择文件，传入参数是文件路径。
+//  gulp.dest(path) - 输出文件 path：执行操作后文件保存路径（自己创建）
+//  gulp.pipe() - 管道，你可以暂时将 pipe 理解为将操作加入执行队列
+
+//这样的压缩命令，当源文件更改时，生成的压缩文件不会随着更新，就需要监听装置，
+
+3.编辑监听任务
+gulp.task('auto',function(){
+	// 监听文件修改，当原js文件被修改则执行 script 任务
+	gulp.watch('js/*.js',['script']);
+})
+//接着在命令行输入 gulp auto，自动监听 js/*.js 文件的修改后压缩js。（不要关闭打开的 gulp auto ，让它挂起）
+// 使用 gulp.task('default') 定义默认任务
+
+4.简化命令行的输入
+// 在命令行使用 gulp 启动 script 任务和 auto 任务,在命令行只需输入：gulp
+gulp.task('default',['script','auto'])
+
+5.在gulpfile.js文件同一目录下打开命令行，
+$ gulp
+会提示gulp-uglify没有找到，需要你安装： gulp-uglify组件
+$ npm i -D gulp-uglify
+安装成功后compres文件夹会出现：node_modules文件夹，是npm安装的模板
+在命令行输入：gulp-uglify -v 出现对应的版本号则安装完成
+$ gulp
+运行成功后，在对应文件夹dist/js/就可以看到压缩后的js文件
+
+
+二、压缩css代码
+1.创建css文件夹，对应建立.css文件
+2.文件script.js的内容
+// 引入gulp, 实际上是Gulp的一个实例对象
+var gulp = require('gulp');
+// 是一个压缩css的插件，返回的是一个函数
+var minifyCss = require('gulp-minify-css');
+// 压缩 css 文件
+gulp.task('css', function() {
+    // 1. 找到文件（压缩css文件夹下的所有的css文件）
+    gulp.src('css/*.css')
+    // 2. 压缩文件
+        .pipe(minifyCss())
+    // 3. 另存压缩后的文件（创建对应的文件夹dist/css）
+        .pipe(gulp.dest('dist/css'))
+})
+
+3.编辑监听任务
+gulp.task('auto',function(){
+	// 监听文件修改，当css文件被修改则执行 script 任务
+	gulp.watch('css/*.css',['css']);
+})
+gulp.task('default',['css','auto'])
+
+4.在命令行安装：gulp-minify-css
+$ npm i -D gulp-minify-css
+$ gulp
+在dist/css/文件夹下查看对应压缩后css文件
+
+
+三、压缩图片
+1.创建images文件夹，对应放入图片
+2.文件script.js的内容
+// 引入gulp, 实际上是Gulp的一个实例对象
+var gulp = require('gulp');
+// 是一个压缩images的插件，返回的是一个函数
+var imagemin = require('gulp-imagemin')
+// 压缩 css 文件
+gulp.task('images', function() {
+    // 1. 找到文件（压缩images文件夹下的所有的images文件）
+    gulp.src('images/*.*')
+    // 2. 压缩文件
+        .pipe(imagemin())
+    // 3. 另存压缩后的文件（创建对应的文件夹dist/images）
+        .pipe(gulp.dest('dist/images'))
+})
+
+3.编辑监听任务
+gulp.task('auto',function(){
+	// 监听文件修改，当文件被修改则执行 script 任务
+	gulp.watch('images/*.*',['images']);
+})
+gulp.task('default',['images','auto'])
+
+4.在命令行安装：gulp-imagemin
+$ npm i -D gulp-imagemin
+$ gulp
+在命令行可以看到图片压缩的变化（ gulp-imagemin: Minified 1 image (saved 728 B - 1.1%)）
+在dist/images/文件夹下查看对应压缩后图片
+
+四、es6实时转码
+在命令行安装gulp-babel
+$ npm install babel-preset-env --save-dev
+$ npm i -D gulp-babel
+$ npm i -D babel-core
+$ npm i -D babel-preset-env
+在gulpfile.js同一文件夹下创建文件：.babelrc(隐藏文件)
+.babelrc
+```
+{
+  "presets": ["env"]
+}
+```
+
+五、对应的gulpfile.js文件完整一点包括：js、css、images压缩，还有less、sass转成css文件，同时压缩
+文件script.js的内容
+// 引入gulp，添加插件gulp-babel、'gulp-uglify、gulp-minify-css、gulp-imagemin、gulp-less、gulp-ruby-sass
+let gulp = require('gulp')
+let babel = require('gulp-babel');
+let uglify = require('gulp-uglify');
+let minifyCss = require('gulp-minify-css');
+let imagemin = require('gulp-imagemin')
+let less = require('gulp-less')
+let sass = require('gulp-ruby-sass')
+
+// 新建一个名叫script的任务
+gulp.task('script', () => {
+  //读取js/*.js; 通过管道让uglify()去处理所有的流，通过管道把文件写入到目标文件中
+  //**/表示js目录任意多层级目录下的js文件
+  gulp.src('js/**/*.js')
+  .pipe(babel())
+  .pipe(uglify())
+  .pipe(gulp.dest('dist/js'));
+});
+// 新建一个名为css的任务
+gulp.task('css', () => {
+  gulp.src('css/**/*.css')
+  .pipe(minifyCss())
+  .pipe(gulp.dest('dist/css'));
+});
+// 新建一个名为images的任务
+gulp.task('images', () =>{
+	gulp.src('images/**/*.*')
+	.pipe(imagemin({
+		progressive:true
+	}))
+	.pipe(gulp.dest('dist/images'));
+});
+// 新建一个名为less的任务
+gulp.task('less',() =>{
+	gulp.src('less/**/**.less')
+	.pipe(less())
+	.pipe(gulp.dest('dist/css'));
+});
+// 新建一个名为sass的任务
+gulp.task('sass',() =>{
+	return sass('sass/*.*')
+	.on('error',function(err){
+		console.error('Error!',err.message);
+	})
+	.pipe(gulp.dest('dist/css'))
+});
+
+//新建一个名为auto的任务
+gulp.task('auto', function(){
+  // 监听文件，如果发生变化则执行
+  gulp.watch('js/**/*.js', ['script']);
+  gulp.watch('css/**/*.css', ['css']);
+  gulp.watch('images/**/*.*',['images']);
+  gulp.watch('less/**/**.less',['less']);
+  gulp.watch('sass/**/**.scss',['sass'])
+});
+
+//新建一个名叫default的任务，执行这些任务之前，先执行script,css,auto任务
+gulp.task('default', ['script', 'css', 'images','less','sass','auto']);
+
+
+
+此文件对应在命令行还需安装：gulp-less、gulp-ruby-sass
+$ npm i -D gulp-less
+$ npm i -D gulp-ruby-sass
+$ gulp
+成功运行时可以看到程序的进度：
+[20:13:44] Starting 'script'...
+[20:13:44] Finished 'script' after 9.76 ms
+[20:13:44] Starting 'css'...
+[20:13:44] Finished 'css' after 2.13 ms
+[20:13:44] Starting 'images'...
+[20:13:44] Finished 'images' after 2.03 ms
+[20:13:44] Starting 'less'...
+[20:13:44] Finished 'less' after 922 μs
+[20:13:44] Starting 'sass'...
+[20:13:44] Starting 'auto'...
+[20:13:44] Finished 'auto' after 27 ms
+[20:13:45] directory ./
+      write ./\a.css
+      write ./\import.css
+[20:13:50] Finished 'sass' after 5.65 s
+[20:13:50] Starting 'default'...
+[20:13:50] Finished 'default' after 43 μs
+[20:13:50] gulp-imagemin: Minified 1 image (saved 728 B - 1.1%)
+
+[20:16:12] Starting 'less'...
+[20:16:12] Finished 'less' after 7.68 ms
+[20:16:23] Starting 'script'...
+[20:16:23] Finished 'script' after 2.02 ms
+
+
+
+
+
+
+

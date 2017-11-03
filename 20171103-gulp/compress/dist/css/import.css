@@ -1,0 +1,10 @@
+.sass a {
+  color: blue; }
+
+.sass span {
+  color: yellowgreen; }
+
+.import a {
+  color: red; }
+  .import a span {
+    color: blue; }
